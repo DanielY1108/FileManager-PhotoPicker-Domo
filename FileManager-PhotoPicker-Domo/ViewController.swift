@@ -24,8 +24,8 @@ class ViewController: UIViewController {
         return stack
     }()
     
-    lazy var button: UIButton = {
-        let button = UIButton(frame: CGRect(x: (view.frame.width/2)-50, y: 670, width: 100, height: 60))
+    lazy var pickerButton: UIButton = {
+        let button = UIButton()
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 20
         button.setTitle("PHPicker", for: .normal)
@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     }()
     
     lazy var saveButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 30, y: 740, width: 100, height: 60))
+        let button = UIButton()
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 20
         button.setTitle("Save", for: .normal)
@@ -41,7 +41,7 @@ class ViewController: UIViewController {
     }()
     
     lazy var readButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: (view.frame.width/2)-50, y: 740, width: 100, height: 60))
+        let button = UIButton()
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 20
         button.setTitle("Read", for: .normal)
@@ -49,14 +49,54 @@ class ViewController: UIViewController {
     }()
     
     lazy var deleteButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 260, y: 740, width: 100, height: 60))
+        let button = UIButton()
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 20
         button.setTitle("Delete", for: .normal)
         return button
     }()
     
-
+    lazy var replaceButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 20
+        button.setTitle("Replace", for: .normal)
+        return button
+    }()
+    
+    lazy var readAllButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 20
+        button.setTitle("Read all", for: .normal)
+        return button
+    }()
+    
+    lazy var hStackLayer1: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [saveButton, pickerButton, deleteButton])
+        stack.spacing = 10
+        stack.axis = .horizontal
+        stack.distribution = .fillEqually
+        return stack
+    }()
+    
+    lazy var hStackLayer2: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [readButton, readAllButton, replaceButton])
+        stack.spacing = 10
+        stack.axis = .horizontal
+        stack.distribution = .fillEqually
+        return stack
+    }()
+    
+    lazy var vStack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [hStackLayer1, hStackLayer2])
+        stack.spacing = 10
+        stack.axis = .vertical
+        stack.distribution = .fillEqually
+        return stack
+    }()
+    
+    
     var identifier = UUID()
     var images = [UIImage]()
     
@@ -64,43 +104,47 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         view.addSubview(stackView)
-        
-        let buttons = [button, saveButton, readButton, deleteButton]
-        buttons.forEach { self.view.addSubview($0) }
-        
+        view.addSubview(vStack)
         
         stackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(self.view.safeAreaLayoutGuide).offset(20)
-            $0.bottom.equalTo(self.button.snp.top).offset(-20)
         }
         
-        button.addTarget(self, action: #selector(photoButtonHandler), for: .touchUpInside)
-        saveButton.addTarget(self, action: #selector(buttonHandler), for: .touchUpInside)
-        readButton.addTarget(self, action: #selector(buttonHandler), for: .touchUpInside)
-        deleteButton.addTarget(self, action: #selector(buttonHandler), for: .touchUpInside)
-
-
+        vStack.snp.makeConstraints {
+            $0.bottom.leading.trailing.equalToSuperview().inset(30)
+            $0.height.equalTo(150)
+        }
+        
+        let buttons = [saveButton, pickerButton, deleteButton, readButton, readAllButton, replaceButton]
+        buttons.forEach {
+            $0.addTarget(self, action: #selector(buttonHandler), for: .touchUpInside)
+        }
     }
     
-    @objc func photoButtonHandler(_ sender: UIButton) {
-        presentPicker()
-    }
     
     @objc func buttonHandler(_ sender: UIButton) {
-    
+        
         switch sender.currentTitle {
         case "Save":
             saveImageToDirectory(identifier: "\(identifier)", image: images.first!)
-        case "Read":
-            guard let image = loadImageFromDirectory(idnetifier: "27261A38-E370-499F-9687-B82BFBE4E7F9") else { return }
-            addImage(image)
+        case "PHPicker":
+            presentPicker()
         case "Delete":
-            replaceImageFromDirectoryV2(at: "E4096C21-0006-4760-AC05-2C50D4C3C039", with: "\(identifier)")
+            deleteImageFromDirectory(idnetifier: "\(identifier)")
+        case "Read":
+            let image = loadImageFromDirectory(idnetifier: "\(identifier)")!
+            addImage(image)
+        case "Read all":
+            let images = loadAllImageFromDirectory()
+            print(images)
+        case "Replace":
+            //            replaceImageFromDirectory(at: "\(identifier)", with: "8E2B2959-00A9-4964-966C-FC024F0FD552")
+            replaceImageFromDirectoryV2(at: "\(identifier)", with: "8E2B2959-00A9-4964-966C-FC024F0FD552")
         default: break
         }
     }
-
+    
     // MARK: - 이미지 저장
     
     func saveImageToDirectory(identifier: String, image: UIImage) {
@@ -160,7 +204,7 @@ class ViewController: UIViewController {
             print("Failed to save images: \(error)")
         }
     }
-
+    
     
     // MARK: - 이미지 로드
     
@@ -177,9 +221,30 @@ class ViewController: UIViewController {
         return UIImage(contentsOfFile: fileURL.path)
     }
     
+    func loadAllImageFromDirectory() -> [UIImage]? {
+        let fileManager = FileManager.default
+        // 파일 경로로 접근
+        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+    
+        do {
+            // 디렉토리 내부의 콘텐츠들에 접근
+            let fileURLs = try fileManager.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
+            // 이미지 path만 필터링
+            let imageURLs = fileURLs.filter { $0.pathExtension.lowercased() == "jpeg" }
+            // 이미지들로 변환
+            let images = imageURLs.compactMap { UIImage(contentsOfFile: $0.path) }
+    
+            return images
+        
+        } catch {
+            print("Error reading directory \(error)")
+        }
+        
+        return nil
+    }
     
     // MARK: - 이미지 삭제
-
+    
     func deleteImageFromDirectory(idnetifier: String) {
         let fileManager = FileManager.default
         let documuentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -195,17 +260,17 @@ class ViewController: UIViewController {
     
     
     // MARK: - 이미지 교체
-
+    
     func replaceImageFromDirectory(at oldIdentifier: String, with newIdentifier: String) {
         let fileManager = FileManager.default
         let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
         let oldFileURL = documentsDirectory.appendingPathComponent(oldIdentifier, conformingTo: .jpeg)
         let newFileURL = documentsDirectory.appendingPathComponent(newIdentifier, conformingTo: .jpeg)
-
+        
         do {
             try fileManager.replaceItem(at: oldFileURL, withItemAt: newFileURL, backupItemName: nil, resultingItemURL: nil)
             print("Successfully replace image")
-
+            
         } catch {
             print("Failed to replace image: \(error)")
         }
@@ -219,7 +284,7 @@ class ViewController: UIViewController {
     }
     
     // MARK: - 포토 피커 설정들
-
+    
     private func presentPicker() {
         // 이미지의 Identifier를 사용하기 위해서는 초기화를 shared로 해줘야 합니다.
         var config = PHPickerConfiguration(photoLibrary: .shared())
@@ -249,11 +314,11 @@ class ViewController: UIViewController {
         let dispatchGroup = DispatchGroup()
         // identifier와 이미지로 dictionary를 만듬 (selectedAssetIdentifiers의 순서에 따라 이미지를 받을 예정입니다.)
         var imagesDict = [String: UIImage]()
-
+        
         for (identifier, result) in selections {
             
             dispatchGroup.enter()
-                        
+            
             let itemProvider = result.itemProvider
             // 만약 itemProvider에서 UIImage로 로드가 가능하다면?
             if itemProvider.canLoadObject(ofClass: UIImage.self) {
@@ -277,7 +342,7 @@ class ViewController: UIViewController {
             
             for identifier in self.selectedAssetIdentifiers {
                 guard let image = imagesDict[identifier] else { return }
-//                self.addImage(image)
+                //                self.addImage(image)
                 
                 self.images.append(image)
             }
@@ -333,7 +398,6 @@ extension ViewController : PHPickerViewControllerDelegate {
 //PNG -> 비손실 그래픽 파일 포맷
 //
 //JPEG -> 이미지 압축시킬 때 일부 데이터를 날려버리는 손실 압축 기법 표준.
-
 
 
 
