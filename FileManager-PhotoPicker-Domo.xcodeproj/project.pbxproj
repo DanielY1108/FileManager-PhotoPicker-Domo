@@ -13,7 +13,21 @@
 		65FA98932A14ECAA004FBEA1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65FA98912A14ECAA004FBEA1 /* Main.storyboard */; };
 		65FA98952A14ECAB004FBEA1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 65FA98942A14ECAB004FBEA1 /* Assets.xcassets */; };
 		65FA98982A14ECAB004FBEA1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65FA98962A14ECAB004FBEA1 /* LaunchScreen.storyboard */; };
+		65FA98A22A14ED16004FBEA1 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 65FA98A12A14ED16004FBEA1 /* SnapKit */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		65FA98A62A14ED19004FBEA1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		65FA98882A14ECAA004FBEA1 /* FileManager-PhotoPicker-Domo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FileManager-PhotoPicker-Domo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -31,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65FA98A22A14ED16004FBEA1 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +57,7 @@
 			children = (
 				65FA988A2A14ECAA004FBEA1 /* FileManager-PhotoPicker-Domo */,
 				65FA98892A14ECAA004FBEA1 /* Products */,
+				65FA98A02A14ED16004FBEA1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,6 +83,13 @@
 			path = "FileManager-PhotoPicker-Domo";
 			sourceTree = "<group>";
 		};
+		65FA98A02A14ED16004FBEA1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -77,12 +100,16 @@
 				65FA98842A14ECAA004FBEA1 /* Sources */,
 				65FA98852A14ECAA004FBEA1 /* Frameworks */,
 				65FA98862A14ECAA004FBEA1 /* Resources */,
+				65FA98A62A14ED19004FBEA1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "FileManager-PhotoPicker-Domo";
+			packageProductDependencies = (
+				65FA98A12A14ED16004FBEA1 /* SnapKit */,
+			);
 			productName = "FileManager-PhotoPicker-Domo";
 			productReference = 65FA98882A14ECAA004FBEA1 /* FileManager-PhotoPicker-Domo.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +138,9 @@
 				Base,
 			);
 			mainGroup = 65FA987F2A14ECAA004FBEA1;
+			packageReferences = (
+				65FA989F2A14ECC0004FBEA1 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 65FA98892A14ECAA004FBEA1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -358,6 +388,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		65FA989F2A14ECC0004FBEA1 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		65FA98A12A14ED16004FBEA1 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65FA989F2A14ECC0004FBEA1 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 65FA98802A14ECAA004FBEA1 /* Project object */;
 }
